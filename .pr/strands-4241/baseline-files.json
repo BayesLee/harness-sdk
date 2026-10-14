@@ -1,0 +1,21 @@
+{
+  "baselineCommit": "79cd7356d3947e2f1bdfa65529938f80aad03b87",
+  "scope": "Selected reproduction source and dependency manifest fingerprints, not a full checkout verification",
+  "sha256": {
+    "package.json": "09ac4b04a5652ae5e2bacd094a8faa1db78db93709b63cc6d7f646ac238a759e",
+    "package-lock.json": "8337668307d881167affc9fd6bf88082037bd723b7c33814fc1a520c46c53313",
+    "strands-ts/package.json": "ea779645baa0471dff96be65d879f34bf86a9b3eed4b1df0fab819c59910e6bb",
+    "strands-ts/src/context-manager/retrieval-tool.ts": "ad3219661955c9a21b33b14da0bdebd187b65cff518564687969d0e27b24c679",
+    "strands-ts/src/context-manager/stash.ts": "d75b1f8d3dec0652f1917b9c56f4b9a141eea06018a6f13417ecb2c86db4af9d",
+    "strands-ts/src/storage/in-memory-storage.ts": "afffd49fed2b3345ad2f4db07ffa7f971d0989a92593b65e0fecb1dc30d39577",
+    "strands-ts/src/__fixtures__/tool-helpers.ts": "7c9276e04aea51af1e7ed01c2f01cbbbc6b200bd4978b5a942fa2547ad6f5a6f",
+    "strands-ts/src/__fixtures__/model-test-helpers.ts": "cc61c140d33df10ed09b1b5180643a2687bf9a41f4ae752cf227c4ff9007eadc",
+    "strands-ts/src/types/messages.ts": "8f503fdf5396b156e756dd8a074ba05ae9a46c8859276578e10f760658187ac5",
+    "strands-ts/src/types/media.ts": "2d8eaf2d21b4d0a473118f3bdb871d3819d83dd2d066e3d48116df32614bfd9f",
+    "strands-ts/src/tools/tool.ts": "2cd57f707011fa6aaa241cdbbed11c54de21be8d1368c26304b2486b7021ef68",
+    "strands-ts/src/tools/tool-factory.ts": "7313961deb8fa0fc6eefc03f8beaebfeddc1577b3a624c78d7f9b480f33770ba",
+    "strands-ts/src/tools/function-tool.ts": "dc0f774baa4705089c57fe15c1541871619f67f7d80f2b64821d4593fb3ad523",
+    "strands-ts/src/tools/zod-tool.ts": "e89e846ba5f510d6e3044d0e4daebc8954a59590d4fc8e53229d7f8be632a4b9",
+    "strands-ts/src/vended-plugins/context-offloader/search.ts": "89e49bb0b4d00690096e76caf53d016e69d19909fc0c192cc3082d413fd4af43"
+  }
+}

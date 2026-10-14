@@ -1,0 +1,210 @@
+{
+  "historicalEvidence": true,
+  "runDateAsiaShanghai": "2026-10-08",
+  "baselineCommit": "79cd7356d3947e2f1bdfa65529938f80aad03b87",
+  "runtime": {
+    "node": "v24.19.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "dependencyVersions": {
+    "tsx_root": "4.22.5",
+    "typescript_workspace": "6.0.3",
+    "typescript_root": "5.9.3",
+    "vitest_workspace": "4.1.11",
+    "zod_root": "4.4.3",
+    "npm_cli": "11.11.0"
+  },
+  "scope": "Real retrieval .invoke/.stream, Stash and InMemoryStorage; upstream mock ToolContext; no Agent/model invocation",
+  "results": [
+    {
+      "name": "reproduction",
+      "started_at": "2026-10-07T16:50:13.090556+00:00",
+      "finished_at": "2026-10-07T16:50:13.508196+00:00",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "matched_expected_exit": true
+    },
+    {
+      "name": "upstream-focused-tests",
+      "started_at": "2026-10-07T16:50:35.934690+00:00",
+      "finished_at": "2026-10-07T16:50:39.979713+00:00",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "matched_expected_exit": true
+    },
+    {
+      "name": "contract",
+      "started_at": "2026-10-07T16:52:39.183401+00:00",
+      "finished_at": "2026-10-07T16:52:39.561658+00:00",
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "evidence_valid": true,
+      "matched_expected_exit": true
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "missing-reference",
+      "input": {
+        "reference": "nonexistent"
+      },
+      "rawInvokeResult": "Error: reference not found: nonexistent",
+      "yieldedEvents": [],
+      "streamResult": {
+        "toolResult": {
+          "toolUseId": "missing-reference",
+          "status": "success",
+          "content": [
+            {
+              "text": "Error: reference not found: nonexistent"
+            }
+          ]
+        }
+      },
+      "resultClass": "ToolResultBlock",
+      "contentClasses": [
+        "TextBlock"
+      ],
+      "expectedCorrectResult": {
+        "toolResult": {
+          "toolUseId": "missing-reference",
+          "status": "error",
+          "content": [
+            {
+              "text": "Error: reference not found: nonexistent"
+            }
+          ]
+        }
+      },
+      "correctStatusAssertionPassed": false
+    },
+    {
+      "id": "non-text-pattern",
+      "input": {
+        "reference": "tool-img_0",
+        "pattern": "test"
+      },
+      "rawInvokeResult": "Error: cannot search non-text content. Omit pattern/line_range to retrieve full content.",
+      "yieldedEvents": [],
+      "streamResult": {
+        "toolResult": {
+          "toolUseId": "non-text-pattern",
+          "status": "success",
+          "content": [
+            {
+              "text": "Error: cannot search non-text content. Omit pattern/line_range to retrieve full content."
+            }
+          ]
+        }
+      },
+      "resultClass": "ToolResultBlock",
+      "contentClasses": [
+        "TextBlock"
+      ],
+      "expectedCorrectResult": {
+        "toolResult": {
+          "toolUseId": "non-text-pattern",
+          "status": "error",
+          "content": [
+            {
+              "text": "Error: cannot search non-text content. Omit pattern/line_range to retrieve full content."
+            }
+          ]
+        }
+      },
+      "correctStatusAssertionPassed": false
+    },
+    {
+      "id": "full-text",
+      "input": {
+        "reference": "tool-text_0"
+      },
+      "rawInvokeResult": {
+        "text": "hello world\nline two"
+      },
+      "yieldedEvents": [],
+      "streamResult": {
+        "toolResult": {
+          "toolUseId": "full-text",
+          "status": "success",
+          "content": [
+            {
+              "text": "hello world\nline two"
+            }
+          ]
+        }
+      },
+      "resultClass": "ToolResultBlock",
+      "contentClasses": [
+        "TextBlock"
+      ],
+      "expectedCorrectResult": {
+        "toolResult": {
+          "toolUseId": "full-text",
+          "status": "success",
+          "content": [
+            {
+              "text": "hello world\nline two"
+            }
+          ]
+        }
+      },
+      "correctStatusAssertionPassed": true
+    },
+    {
+      "id": "no-match",
+      "input": {
+        "reference": "tool-text_0",
+        "pattern": "NOT_PRESENT_4241"
+      },
+      "rawInvokeResult": "No matches found for pattern 'NOT_PRESENT_4241' (searched 2 lines).",
+      "yieldedEvents": [],
+      "streamResult": {
+        "toolResult": {
+          "toolUseId": "no-match",
+          "status": "success",
+          "content": [
+            {
+              "text": "No matches found for pattern 'NOT_PRESENT_4241' (searched 2 lines)."
+            }
+          ]
+        }
+      },
+      "resultClass": "ToolResultBlock",
+      "contentClasses": [
+        "TextBlock"
+      ],
+      "expectedCorrectResult": {
+        "toolResult": {
+          "toolUseId": "no-match",
+          "status": "success",
+          "content": [
+            {
+              "text": "No matches found for pattern 'NOT_PRESENT_4241' (searched 2 lines)."
+            }
+          ]
+        }
+      },
+      "correctStatusAssertionPassed": true
+    }
+  ],
+  "existingUpstreamUnitTests": {
+    "project": "unit-node",
+    "retry": 0,
+    "total": 105,
+    "failed": 0,
+    "files": {
+      "src/context-manager/__tests__/retrieval-tool.test.ts": 8,
+      "src/context-manager/__tests__/stash.test.ts": 8,
+      "src/tools/__tests__/tool.test.ts": 57,
+      "src/tools/__tests__/zod-tool.test.ts": 32
+    }
+  },
+  "limits": [
+    "Original historical results, not a fresh validation of this portable package",
+    "No implementation changes",
+    "No Python reproduction",
+    "No full-repository tests or independent full-repository type check"
+  ]
+}

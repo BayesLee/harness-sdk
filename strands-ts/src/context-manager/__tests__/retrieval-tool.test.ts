@@ -3,6 +3,8 @@ import { createRetrievalTool, RETRIEVAL_TOOL_NAME } from '../retrieval-tool.js'
 import { Stash } from '../stash.js'
 import { InMemoryStorage } from '../../storage/in-memory-storage.js'
 import { ImageBlock } from '../../types/media.js'
+import { collectGenerator } from '../../__fixtures__/model-test-helpers.js'
+import { createMockContext } from '../../__fixtures__/tool-helpers.js'
 
 function invoke(retrievalTool: ReturnType<typeof createRetrievalTool>, input: unknown): Promise<unknown> {
   return (retrievalTool as unknown as { invoke(input: unknown): Promise<unknown> }).invoke(input)
@@ -97,5 +99,106 @@ describe('retrieval tool', () => {
 
     const result = (await invoke(retrievalTool, { reference: ref, pattern: 'test' })) as string
     expect(result).toContain('cannot search non-text content')
+  })
+
+  describe('stream', () => {
+    // Retrieval failures retain their content and report error status (#4241).
+    it('returns error status for an unknown reference', async () => {
+      const stash = new Stash(new InMemoryStorage(), 'test-session', 'test-agent')
+      const retrievalTool = createRetrievalTool(stash)
+
+      const { result } = await collectGenerator(
+        retrievalTool.stream(
+          createMockContext({
+            name: RETRIEVAL_TOOL_NAME,
+            toolUseId: 'retrieve-missing',
+            input: { reference: 'nonexistent' },
+          })
+        )
+      )
+
+      expect(result.toJSON()).toEqual({
+        toolResult: {
+          toolUseId: 'retrieve-missing',
+          status: 'error',
+          content: [{ text: 'Error: reference not found: nonexistent' }],
+        },
+      })
+    })
+
+    it('returns error status when searching non-text content', async () => {
+      const stash = new Stash(new InMemoryStorage(), 'test-session', 'test-agent')
+      const imageData = { image: { format: 'png', source: { bytes: 'iVBORw0KGgo=' } } }
+      const ref = await stash.store('tool-img', 0, encodeJSON(imageData))
+      const retrievalTool = createRetrievalTool(stash)
+
+      const { result } = await collectGenerator(
+        retrievalTool.stream(
+          createMockContext({
+            name: RETRIEVAL_TOOL_NAME,
+            toolUseId: 'retrieve-image-pattern',
+            input: { reference: ref, pattern: 'test' },
+          })
+        )
+      )
+
+      expect(result.toJSON()).toEqual({
+        toolResult: {
+          toolUseId: 'retrieve-image-pattern',
+          status: 'error',
+          content: [
+            { text: 'Error: cannot search non-text content. Omit pattern/line_range to retrieve full content.' },
+          ],
+        },
+      })
+    })
+
+    it('returns success status and the original full text', async () => {
+      const { stash, refPromise } = makeStashWithTextBlock('hello world\nline two')
+      const ref = await refPromise
+      const retrievalTool = createRetrievalTool(stash)
+
+      const { result } = await collectGenerator(
+        retrievalTool.stream(
+          createMockContext({
+            name: RETRIEVAL_TOOL_NAME,
+            toolUseId: 'retrieve-full-text',
+            input: { reference: ref },
+          })
+        )
+      )
+
+      expect(result.toJSON()).toEqual({
+        toolResult: {
+          toolUseId: 'retrieve-full-text',
+          status: 'success',
+          content: [{ text: 'hello world\nline two' }],
+        },
+      })
+    })
+
+    it('returns success status when the pattern has no matches', async () => {
+      const { stash, refPromise } = makeStashWithTextBlock('hello world\nline two')
+      const ref = await refPromise
+      const retrievalTool = createRetrievalTool(stash)
+
+      const { result } = await collectGenerator(
+        retrievalTool.stream(
+          createMockContext({
+            name: RETRIEVAL_TOOL_NAME,
+            toolUseId: 'retrieve-no-match',
+            input: { reference: ref, pattern: 'absent' },
+          })
+        )
+      )
+
+      expect(result.toJSON()).toEqual({
+        toolResult: {
+          toolUseId: 'retrieve-no-match',
+          status: 'success',
+          content: [{ text: "No matches found for pattern 'absent' (searched 2 lines)." }],
+        },
+      })
+    })
   })
 })
